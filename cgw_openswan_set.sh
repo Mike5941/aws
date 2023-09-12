@@ -1,6 +1,6 @@
-#!bin/bash
+#!/bin/bash
 yum install -y openswan
-cat <<EOF>> /etc/sysctl.conf
+cat <<EOF> /etc/sysctl.conf
 net.ipv4.ip_forward = 1
 net.ipv4.conf.default.rp_filter = 0
 net.ipv4.conf.default.accept_source_route = 0
@@ -10,14 +10,14 @@ sysctl -p /etc/sysctl.conf
 
 printf "고객 게이트웨이 IP는> "
 read leftid
-printf "Tunnel1의 IP는> "
+printf "터널1의 IP는> "
 read right
-printf "local subnet> "
+printf "로컬 서브넷은> "
 read local
-printf "remote subnet> "
+printf "원격 서브넷은> "
 read remote
 
-cat<<EOF>> /etc/ipsec.d/aws.conf
+cat <<EOF> /etc/ipsec.d/aws.conf
 conn Tunnel1
 	authby=secret
 	auto=start
@@ -38,8 +38,8 @@ conn Tunnel1
 	dpdaction=restart_by_peer
 EOF
 
-cat<<EOF> /etc/ipsec.d/aws.secrets
+cat <<EOF> /etc/ipsec.d/aws.secrets
 $leftid $right : PSK "password"
 EOF
 
-systemctl start ipsec & systctl enable ipsec
+systemctl start ipsec & systemctl enable ipsec
